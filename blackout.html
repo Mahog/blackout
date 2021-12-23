@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>blackout screen</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      font-family: sans-serif;
+    }
+    body * {
+      padding: 38.2vh 0;
+      width: 100%;
+      box-sizing: border-box;
+      text-align: center;
+      font-size: 20pt;
+      color: #999;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body style="background:black">
+  <div class="message">Click anywhere to go fullscreen.</div>
+  <script>
+  function goFullScreen() {
+      const body = document.body;
+
+      // figure out the browser's method to request going fullscreen
+      const requestMethod = body.requestFullScreen
+        || body.webkitRequestFullScreen
+        || body.mozRequestFullScreen
+        || body.msRequestFullScreen;
+
+      // for older browsers that do not have that function, do nothing.
+      if (!requestMethod) {
+        return;
+      }
+
+      // go fullscreen with a blank element;
+      requestMethod.call(body);
+    }
+
+    function toggleMessage(flag) {
+      const message = document.querySelector(".message");
+      message.style["display"] = flag ? "none" : "block";
+    }
+
+    document.addEventListener("click", () => goFullScreen());
+
+    let isInFullScreen = false;
+    document.addEventListener("fullscreenchange", () => {
+      isInFullScreen = !isInFullScreen;
+      toggleMessage(isInFullScreen);
+    });
+  </script>
+</body>
+</html>
