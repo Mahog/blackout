@@ -12,7 +12,7 @@
       justify-content: center;
       font-family: sans-serif;
     }
-    body * {
+    .message {
       padding: 38.2vh 0;
       width: 100%;
       box-sizing: border-box;
@@ -21,19 +21,36 @@
       color: #999;
       cursor: pointer;
     }
+    .message.exit {
+      color: #222;
+      opacity: 0;
+      transition: all 3s ease-in-out;
+    }
+    body:hover .message.exit {
+      opacity: 1;
+    }
   </style>
 </head>
 <body style="background:black">
-  <div class="message">Click anywhere to go fullscreen.</div>
+  <div class="message enter">Click anywhere to go fullscreen.</div>
+  <div class="message exit" style="display:none;">Click anywhere to exit fullscreen.</div>
   <script>
-  function goFullScreen() {
+  function toggleFullScreen() {
       const body = document.body;
 
       // figure out the browser's method to request going fullscreen
-      const requestMethod = body.requestFullScreen
+      let requestMethod = body.requestFullScreen
         || body.webkitRequestFullScreen
         || body.mozRequestFullScreen
         || body.msRequestFullScreen;
+
+      // if in fullscreen already, find the exit function
+      if (isInFullScreen) {
+        requestMethod = document.exitFullscreen
+          || document.webkitExitFullcreen
+          || document.mozCancelFullScreen
+          || document.msExitFullscreen
+      }
 
       // for older browsers that do not have that function, do nothing.
       if (!requestMethod) {
@@ -41,15 +58,27 @@
       }
 
       // go fullscreen with a blank element;
-      requestMethod.call(body);
+      requestMethod.call(isInFullScreen ? document : body);
+    }
+
+    function exitFullScreen() {
+
+      if (!requestMethod) {
+        return;
+      }
+
+      requestMethod.call(document);
     }
 
     function toggleMessage(flag) {
-      const message = document.querySelector(".message");
-      message.style["display"] = flag ? "none" : "block";
+      const enterMessage = document.querySelector(".message.enter");
+      enterMessage.style["display"] = flag ? "none" : "block";
+
+      const exitMessage = document.querySelector(".message.exit");
+      exitMessage.style["display"] = flag ? "block" : "none";
     }
 
-    document.addEventListener("click", () => goFullScreen());
+    document.addEventListener("click", toggleFullScreen);
 
     let isInFullScreen = false;
     document.addEventListener("fullscreenchange", () => {
