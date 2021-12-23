@@ -61,15 +61,6 @@
       requestMethod.call(isInFullScreen ? document : body);
     }
 
-    function exitFullScreen() {
-
-      if (!requestMethod) {
-        return;
-      }
-
-      requestMethod.call(document);
-    }
-
     function toggleMessage(flag) {
       const enterMessage = document.querySelector(".message.enter");
       enterMessage.style["display"] = flag ? "none" : "block";
